@@ -12,7 +12,8 @@ public class UsageExampleCode {
 
     public static void main(String[] args) {
         // Use ObjectMapper from Jackson or another JSON library
-        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         RawSourceMapRetriever rawSourceMapRetriever = minifiedFilePath -> {
             return SourceMapUtils.retrieveSourceMapFromFile("./source_maps", minifiedFilePath)

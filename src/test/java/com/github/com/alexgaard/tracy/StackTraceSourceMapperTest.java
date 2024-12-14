@@ -8,12 +8,8 @@ import com.github.alexgaard.tracy.stack_trace.StackTraceSourceMapper;
 import com.github.alexgaard.tracy.utils.SourceMapUtils;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
