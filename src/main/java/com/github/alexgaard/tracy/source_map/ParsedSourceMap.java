@@ -1,6 +1,9 @@
 package com.github.alexgaard.tracy.source_map;
 
 import java.util.List;
+import java.util.Objects;
+
+import static com.github.alexgaard.tracy.source_map.MappingsTokenizer.extractTokens;
 
 public class ParsedSourceMap {
 
@@ -25,4 +28,42 @@ public class ParsedSourceMap {
         this.ignoreList = ignoreList;
     }
 
+    public static ParsedSourceMap parseRawSourceMap(RawSourceMap rawSourceMap) {
+        List<MappingToken> mappingTokens = extractTokens(rawSourceMap.getMappings());
+        mappingTokens.sort(MappingToken::compare);
+
+        return new ParsedSourceMap(
+                rawSourceMap.getVersion(),
+                rawSourceMap.getFile(),
+                rawSourceMap.getSources(),
+                rawSourceMap.getNames(),
+                mappingTokens,
+                rawSourceMap.getX_google_ignoreList()
+        );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ParsedSourceMap that = (ParsedSourceMap) o;
+        return version == that.version && Objects.equals(file, that.file) && Objects.equals(sources, that.sources) && Objects.equals(names, that.names) && Objects.equals(mappingTokens, that.mappingTokens) && Objects.equals(ignoreList, that.ignoreList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(version, file, sources, names, mappingTokens, ignoreList);
+    }
+
+    @Override
+    public String toString() {
+        return "ParsedSourceMap{" +
+                "version=" + version +
+                ", file='" + file + '\'' +
+                ", sourcesSize=" + sources.size() +
+                ", namesSize=" + names.size() +
+                ", mappingTokensSize=" + mappingTokens.size() +
+                ", ignoreList=" + ignoreList +
+                '}';
+    }
 }

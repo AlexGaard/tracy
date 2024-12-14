@@ -43,4 +43,24 @@ public class MappingToken {
                 ", nameIndex=" + nameIndex +
                 '}';
     }
+
+    public static int compare(MappingToken m1, MappingToken m2) {
+        if (m1.minifiedLine < m2.minifiedLine) {
+            return -1;
+        }
+
+        if (m1.minifiedLine > m2.minifiedLine) {
+            return 1;
+        }
+
+        if (m1.minifiedColumn < m2.minifiedColumn) {
+            return -1;
+        }
+
+        if (m1.minifiedColumn > m2.minifiedColumn) {
+            return 1;
+        }
+
+        return 0;
+    }
 }

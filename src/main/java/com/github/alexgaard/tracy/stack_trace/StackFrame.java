@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class StackFrame {
     public final String file;
+
     public final int line;
 
     public final int col;

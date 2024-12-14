@@ -5,12 +5,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StackTrackParser {
+public class StackTraceParserImpl implements StackTraceParser {
 
-    private static Pattern stackFramePattern = Pattern.compile("[\\w-]+\\.js:\\d+:\\d+");
+    private static final Pattern STACK_FRAME_PATTERN = Pattern.compile("[\\w-]+\\.js:\\d+:\\d+");
 
-    public static Map<String, StackFrame> findStackFrames(String minifiedStackTrace) {
-        Matcher matcher = stackFramePattern.matcher(minifiedStackTrace);
+    @Override
+    public Map<String, StackFrame> parse(String minifiedStackTrace) {
+        Matcher matcher = STACK_FRAME_PATTERN.matcher(minifiedStackTrace);
 
         Map<String, StackFrame> stackFrames = new HashMap<>();
 

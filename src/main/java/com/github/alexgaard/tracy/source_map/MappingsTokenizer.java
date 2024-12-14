@@ -1,6 +1,7 @@
 package com.github.alexgaard.tracy.source_map;
 
-import com.github.alexgaard.tracy.base64.Base64VLQ;
+import com.github.alexgaard.tracy.base64vlq.Base64Vlq;
+import com.github.alexgaard.tracy.base64vlq.CharIterator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public class MappingsTokenizer {
 
     public static List<MappingToken> extractTokens(String mappingsStr) {
-        final MappingIterator iter = new MappingIterator(mappingsStr);
+        final CharIterator iter = CharIterator.fromString(mappingsStr);
         final List<MappingToken> tokens = new ArrayList<>();
 
         int minifiedLineNumber = 0;
@@ -22,14 +23,7 @@ public class MappingsTokenizer {
         while (iter.hasNext()) {
             char c = iter.currentChar();
 
-            if (c == ';') {
-                minifiedLineNumber += 1;
-                minifiedColumnNumber = 0;
-                iter.next();
-                continue;
-            }
-
-            if (c == ',') {
+            if (c == ',' || c == ';') {
                 tokens.add(new MappingToken(
                         minifiedLineNumber,
                         minifiedColumnNumber,
@@ -39,31 +33,36 @@ public class MappingsTokenizer {
                         valueCounter >= 5 ? nameIndex : Integer.MIN_VALUE
                 ));
 
+                if (c == ';') {
+                    minifiedLineNumber += 1;
+                    minifiedColumnNumber = 0;
+                }
+
                 valueCounter = 0;
                 iter.next();
                 continue;
             }
 
-            int decodedValue = Base64VLQ.decode(iter);
+            int decodedValue = Base64Vlq.decode(iter);
 
             if (valueCounter == 0) {
                 minifiedColumnNumber += decodedValue;
-//                minifiedColumnNumber = Math.max(minifiedColumnNumber, 0);
+                minifiedColumnNumber = Math.max(minifiedColumnNumber, 0);
             } else if (valueCounter == 1) {
                 sourceIndex += decodedValue;
-//                sourceIndex = Math.max(sourceIndex, 0);
+                sourceIndex = Math.max(sourceIndex, 0);
 
             } else if (valueCounter == 2) {
                 sourceLine += decodedValue;
-//                sourceLine = Math.max(sourceLine, 0);
+                sourceLine = Math.max(sourceLine, 0);
 
             } else if (valueCounter == 3) {
                 sourceColumn += decodedValue;
-//                sourceColumn = Math.max(sourceColumn, 0);
+                sourceColumn = Math.max(sourceColumn, 0);
 
             } else if (valueCounter == 4) {
                 nameIndex += decodedValue;
-//                nameIndex = Math.max(nameIndex, 0);
+                nameIndex = Math.max(nameIndex, 0);
 
             }
 
@@ -73,38 +72,13 @@ public class MappingsTokenizer {
         tokens.add(new MappingToken(
                 minifiedLineNumber,
                 minifiedColumnNumber,
-                sourceIndex,
-                sourceLine,
-                sourceColumn,
-                nameIndex
+                valueCounter >= 2 ? sourceIndex : Integer.MIN_VALUE,
+                valueCounter >= 3 ? sourceLine : Integer.MIN_VALUE,
+                valueCounter >= 4 ? sourceColumn : Integer.MIN_VALUE,
+                valueCounter >= 5 ? nameIndex : Integer.MIN_VALUE
         ));
 
         return tokens;
-    }
-
-    private static class MappingIterator implements Base64VLQ.CharIterator {
-
-        private final String mappingStr;
-
-        private int charIdx = 0;
-
-        private MappingIterator(String mappingStr) {
-            this.mappingStr = mappingStr;
-        }
-
-        private char currentChar() {
-            return mappingStr.charAt(charIdx);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return charIdx < mappingStr.length();
-        }
-
-        @Override
-        public char next() {
-            return mappingStr.charAt(charIdx++);
-        }
     }
 
 }

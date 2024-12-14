@@ -4,6 +4,6 @@ import java.util.Optional;
 
 public interface SourceMapRetriever {
 
-    Optional<RawSourceMap> getSourceMap(String minifiedFilePath);
+    Optional<ParsedSourceMap> getSourceMap(String minifiedFilePath);
 
 }
