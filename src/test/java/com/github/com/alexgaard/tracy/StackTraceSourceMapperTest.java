@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexgaard.tracy.source_map.RawSourceMap;
 import com.github.alexgaard.tracy.source_map.RawSourceMapRetriever;
 import com.github.alexgaard.tracy.stack_trace.StackTraceSourceMapper;
+import com.github.alexgaard.tracy.utils.SourceMapUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -22,7 +23,8 @@ public class StackTraceSourceMapperTest {
 
     @Test
     public void shouldResolveMinifiedStackTrace() throws IOException {
-        String debugMap = getResourceFileAsString("index-BEz93Ooz.js.map");
+        String debugMap = SourceMapUtils.retrieveSourceMapFromFile("./source_maps", "index-BEz93Ooz.js")
+                .orElseThrow();
 
         RawSourceMap rawSourceMap = mapper.readValue(debugMap, RawSourceMap.class);
         RawSourceMapRetriever sourceMapRetriever = minifiedFilePath -> Optional.of(rawSourceMap);
@@ -41,29 +43,18 @@ public class StackTraceSourceMapperTest {
                 "    at E (index-BEz93Ooz.js:25:1562)";
 
         String expectedTrace = "Error: Kablamo\n" +
-                "    at t (../../src/App.tsx:11:18)\n" +
-                "    at r (../../src/App.tsx:18:12)\n" +
-                "    at Rd (../../src/App.tsx:22:12)\n" +
-                "    at hu (index-BEz93Ooz.js:38:16959)\n" +
-                "    at Xa (index-BEz93Ooz.js:40:43694)\n" +
-                "    at Qa (index-BEz93Ooz.js:40:39499)\n" +
-                "    at md (index-BEz93Ooz.js:40:39430)\n" +
-                "    at Jr (index-BEz93Ooz.js:40:39289)\n" +
-                "    at Ba (index-BEz93Ooz.js:40:34440)\n" +
-                "    at E (index-BEz93Ooz.js:25:1562)";
+                "    at ../../src/App.tsx:11:18\n" +
+                "    at test2 (../../src/App.tsx:18:12)\n" +
+                "    at test (../../src/App.tsx:22:12)\n" +
+                "    at c (../../node_modules/react-dom/cjs/react-dom.production.min.js:160:136)\n" +
+                "    at Nh (../../node_modules/react-dom/cjs/react-dom.production.min.js:289:336)\n" +
+                "    at Vk (../../node_modules/react-dom/cjs/react-dom.production.min.js:279:388)\n" +
+                "    at Uk (../../node_modules/react-dom/cjs/react-dom.production.min.js:279:319)\n" +
+                "    at Tk (../../node_modules/react-dom/cjs/react-dom.production.min.js:279:179)\n" +
+                "    at Ik (../../node_modules/react-dom/cjs/react-dom.production.min.js:267:208)\n" +
+                "    at d (../../node_modules/scheduler/cjs/scheduler.production.min.js:13:202)";
 
         assertEquals(expectedTrace, stackTraceSourceMapper.applySourceMap(stackTrace));
-    }
-
-    private static String getResourceFileAsString(String filePath) throws IOException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        try (InputStream is = classLoader.getResourceAsStream(filePath)) {
-            if (is == null) return null;
-            try (InputStreamReader isr = new InputStreamReader(is);
-                 BufferedReader reader = new BufferedReader(isr)) {
-                return reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            }
-        }
     }
 
 }
