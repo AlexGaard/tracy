@@ -3,26 +3,20 @@ package com.github.alexgaard.tracy.stack_trace;
 import java.util.Objects;
 
 public class StackFrame {
+
+    public final String functionName;
+
     public final String file;
 
     public final int line;
 
     public final int col;
 
-    public StackFrame(String file, int line, int col) {
+    public StackFrame(String functionName, String file, int line, int col) {
+        this.functionName = functionName;
         this.file = file;
         this.line = line;
         this.col = col;
-    }
-
-    public static StackFrame fromString(String str) {
-        String[] split = str.split(":");
-
-        return new StackFrame(split[0], Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-    }
-
-    public String toFrameString() {
-        return file + ":" + line + ":" + col;
     }
 
     @Override
@@ -41,7 +35,8 @@ public class StackFrame {
     @Override
     public String toString() {
         return "StackFrame{" +
-                "file='" + file + '\'' +
+                "functionName='" + functionName + '\'' +
+                ", file='" + file + '\'' +
                 ", line=" + line +
                 ", col=" + col +
                 '}';

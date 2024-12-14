@@ -9,26 +9,42 @@ import java.util.Optional;
 
 public class BaseStackFrameResolver implements StackFrameResolver {
 
+    private final boolean useIgnoreList;
+
+    public BaseStackFrameResolver(boolean useIgnoreList) {
+        this.useIgnoreList = useIgnoreList;
+    }
+
     @Override
     public Optional<StackFrame> resolve(StackFrame minifiedStackFrame, ParsedSourceMap parsedSourceMap) {
-        Optional<MappingToken> mappingToken = findMappingTokenRange(minifiedStackFrame, parsedSourceMap.mappingTokens);
+        Optional<MappingToken> mappingToken = findMappingToken(minifiedStackFrame, parsedSourceMap.mappingTokens);
 
-        return mappingToken.map(token -> createSourceStackFrame(minifiedStackFrame, token, parsedSourceMap));
+        return mappingToken.map(token -> {
+            if (useIgnoreList) {
+                List<Integer> ignoreList = parsedSourceMap.ignoreList != null
+                        ? parsedSourceMap.ignoreList
+                        : Collections.emptyList();
+
+                if (ignoreList.contains(token.sourceIndex)) {
+                    return minifiedStackFrame;
+                }
+            }
+
+            return createSourceStackFrame(token, parsedSourceMap);
+        });
     }
 
-    public static StackFrame createSourceStackFrame(StackFrame minifiedFrame, MappingToken mappingToken, ParsedSourceMap sourceMap) {
-        List<Integer> ignoreList = sourceMap.ignoreList != null
-                ? sourceMap.ignoreList
-                : Collections.emptyList();
+    public static StackFrame createSourceStackFrame(MappingToken mappingToken, ParsedSourceMap sourceMap) {
+        String functionName = null;
 
-        if (ignoreList.contains(mappingToken.sourceIndex)) {
-            return minifiedFrame;
+        if (mappingToken.nameIndex >= 0 && mappingToken.nameIndex < sourceMap.names.size()) {
+            functionName = sourceMap.names.get(mappingToken.nameIndex);
         }
 
-        return new StackFrame(sourceMap.sources.get(mappingToken.sourceIndex), mappingToken.sourceLine + 1, mappingToken.sourceColumn);
+        return new StackFrame(functionName, sourceMap.sources.get(mappingToken.sourceIndex), mappingToken.sourceLine + 1, mappingToken.sourceColumn);
     }
 
-    public static Optional<MappingToken> findMappingTokenRange(StackFrame minifiedStackFrame, List<MappingToken> sortedMappingTokens) {
+    public static Optional<MappingToken> findMappingToken(StackFrame minifiedStackFrame, List<MappingToken> sortedMappingTokens) {
         if (sortedMappingTokens.isEmpty()) {
             return Optional.empty();
         }

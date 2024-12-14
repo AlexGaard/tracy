@@ -1,13 +1,18 @@
 package com.github.alexgaard.tracy.source_map;
 
+import com.github.alexgaard.tracy.stack_trace.StackTraceSourceMapper;
 import com.github.benmanes.caffeine.cache.Cache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 public class CachedSourceMapRetriever implements SourceMapRetriever {
 
+    private final static Logger log = LoggerFactory.getLogger(StackTraceSourceMapper.class);
+
     private final RawSourceMapRetriever rawSourceMapRetriever;
+
     private final Cache<String, Optional<ParsedSourceMap>> cachedSourceMaps;
 
     public CachedSourceMapRetriever(RawSourceMapRetriever rawSourceMapRetriever, Cache<String, Optional<ParsedSourceMap>> cachedSourceMaps) {
@@ -18,6 +23,7 @@ public class CachedSourceMapRetriever implements SourceMapRetriever {
     @Override
     public Optional<ParsedSourceMap> getSourceMap(String minifiedFilePath) {
         return cachedSourceMaps.get(minifiedFilePath, (file) -> {
+            log.debug("Retrieving source map for file {}", file);
             return rawSourceMapRetriever.getSourceMap(file).map(ParsedSourceMap::parseRawSourceMap);
         });
     }

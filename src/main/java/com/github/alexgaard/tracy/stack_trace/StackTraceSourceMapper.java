@@ -5,12 +5,16 @@ import com.github.alexgaard.tracy.source_map.ParsedSourceMap;
 import com.github.alexgaard.tracy.source_map.RawSourceMapRetriever;
 import com.github.alexgaard.tracy.source_map.SourceMapRetriever;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 
 public class StackTraceSourceMapper {
+
+    private final static Logger log = LoggerFactory.getLogger(StackTraceSourceMapper.class);
 
     private final SourceMapRetriever sourceMapRetriever;
 
@@ -20,13 +24,13 @@ public class StackTraceSourceMapper {
 
 
     public StackTraceSourceMapper(RawSourceMapRetriever rawSourceMapRetriever) {
-        stackTraceParser = new StackTraceParserImpl();
+        stackTraceParser = new BaseStackTraceParser();
 
         sourceMapRetriever = new CachedSourceMapRetriever(rawSourceMapRetriever, Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofHours(6))
                 .build());
 
-        stackFrameResolver = new CachedStackFrameResolver(new BaseStackFrameResolver(), Caffeine.newBuilder()
+        stackFrameResolver = new CachedStackFrameResolver(new BaseStackFrameResolver(false), Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofHours(6))
                 .build());
     }
@@ -46,16 +50,41 @@ public class StackTraceSourceMapper {
                 continue;
             }
 
+            ParsedSourceMap sourceMap = maybeSourceMap.get();
+
+            if (sourceMap.version != 3) {
+                log.warn("Unable to use source maps with other version than 3. Skipping applying of source map to stack frame");
+                continue;
+            }
+
             Optional<StackFrame> maybeStackFrame = stackFrameResolver.resolve(minifiedStackFrame, maybeSourceMap.get());
 
             if (maybeStackFrame.isEmpty()) {
                 continue;
             }
 
-            stackTrace = stackTrace.replaceAll(stackFrameStr, maybeStackFrame.get().toFrameString());
+            StackFrame resolvedStackFrame = maybeStackFrame.get();
+
+            boolean hadFunctionNameOriginally = minifiedStackFrame.functionName != null && resolvedStackFrame.functionName == null;
+
+            stackTrace = stackTrace.replace(stackFrameStr, toSourceFrameString(resolvedStackFrame, hadFunctionNameOriginally));
         }
 
         return stackTrace;
+    }
+
+    public static String toSourceFrameString(StackFrame sourceFrame, boolean hadFunctionNameOriginally) {
+        String fileLineCol = sourceFrame.file + ":" + sourceFrame.line + ":" + sourceFrame.col;
+
+        if (sourceFrame.functionName != null) {
+            return "at " + sourceFrame.functionName + " (" + fileLineCol + ")";
+        }
+
+        if (hadFunctionNameOriginally) {
+            return "at " + fileLineCol;
+        }
+
+        return fileLineCol;
     }
 
 }
