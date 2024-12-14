@@ -1,6 +1,5 @@
 package com.github.alexgaard.tracy.source_map;
 
-import com.github.alexgaard.tracy.stack_trace.StackTraceSourceMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

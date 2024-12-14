@@ -7,6 +7,8 @@ public class Base64Vlq {
                     "abcdefghijklmnopqrstuvwxyz" +
                     "0123456789+/";
 
+    private Base64Vlq() {}
+
     public static int decode(CharIterator iterator) {
         int shift = 0;
         int value = 0;
@@ -27,10 +29,10 @@ public class Base64Vlq {
             if (hasContinuationBit) {
                 shift += 5;
             } else {
-                boolean should_negate = (value & 1) != 0;
+                boolean shouldNegate = (value & 1) != 0;
                 value >>>= 1;
 
-                if (should_negate) {
+                if (shouldNegate) {
                     return value == 0 ? -0x80000000 : -value;
                 } else {
                     return value;
