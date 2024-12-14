@@ -52,7 +52,7 @@ public class StackTraceSourceMapperTest {
                 "    at Ba (index-BEz93Ooz.js:40:34440)\n" +
                 "    at E (index-BEz93Ooz.js:25:1562)";
 
-        assertEquals(expectedTrace, stackTraceSourceMapper.applySourceToMinifiedStackTrace(stackTrace));
+        assertEquals(expectedTrace, stackTraceSourceMapper.applySourceMap(stackTrace));
     }
 
     private static String getResourceFileAsString(String filePath) throws IOException {

@@ -13,12 +13,18 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <sl4j.version>2.0.12</sl4j.version>
         <jackson.version>2.18.1</jackson.version>
         <caffeine.version>3.1.8</caffeine.version>
         <junit.version>5.10.3</junit.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${sl4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>

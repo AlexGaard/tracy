@@ -31,7 +31,7 @@ public class StackTraceSourceMapper {
                 .build());
     }
 
-    public String applySourceToMinifiedStackTrace(String minifiedStackTrace) {
+    public String applySourceMap(String minifiedStackTrace) {
         Map<String, StackFrame> stackFrames = stackTraceParser.parse(minifiedStackTrace);
 
         String stackTrace = minifiedStackTrace;
