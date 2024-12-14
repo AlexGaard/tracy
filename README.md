@@ -1,5 +1,9 @@
 # Tracy
 
+[![](https://jitpack.io/v/AlexGaard/tracy.svg)](https://jitpack.io/#AlexGaard/tracy) [![Tests](https://github.com/AlexGaard/tracy/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/AlexGaard/tracy/actions/workflows/test.yaml)
+
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=AlexGaard_tracy&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=AlexGaard_tracy) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=AlexGaard_tracy&metric=bugs)](https://sonarcloud.io/summary/new_code?id=AlexGaard_tracy) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=AlexGaard_tracy&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=AlexGaard_tracy) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=AlexGaard_tracy&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=AlexGaard_tracy)
+
 Apply source maps to JavaScript stack traces with Java.
 
 In many cases it is easier to apply source maps to JavaScript stack traces while in the browser before logging it to a backend.

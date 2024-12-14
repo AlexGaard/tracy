@@ -13,12 +13,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StackTraceSourceMapperTest {
+class StackTraceSourceMapperTest {
 
     private final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Test
-    public void shouldResolveMinifiedStackTrace() throws IOException {
+    void shouldResolveMinifiedStackTrace() throws IOException {
         String debugMap = SourceMapUtils.retrieveSourceMapFromFile("./source_maps", "index-BEz93Ooz.js")
                 .orElseThrow();
 

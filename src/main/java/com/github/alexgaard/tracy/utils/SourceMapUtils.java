@@ -14,7 +14,9 @@ import java.util.Optional;
 
 public class SourceMapUtils {
 
-    private final static Logger log = LoggerFactory.getLogger(SourceMapUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(SourceMapUtils.class);
+
+    private SourceMapUtils() {}
 
     public static Optional<String> retrieveSourceMapFromFile(String sourceMapDirectory, String minifiedFilePath) {
         Path sourceMapPath = Paths.get(sourceMapDirectory, minifiedFilePath + ".map");

@@ -9,10 +9,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Base64VlqTest {
+class Base64VlqTest {
 
     @Test
-    public void shouldParseVlq() {
+    void shouldParseVlq() {
         assertEquals(List.of(0,0,0,0), decodeAll("AAAA"));
         assertEquals(List.of(0, 0, 16, 1), decodeAll("AAgBC"));
         assertEquals(List.of(-1), decodeAll("D"));

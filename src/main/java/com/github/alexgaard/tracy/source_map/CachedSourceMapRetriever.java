@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class CachedSourceMapRetriever implements SourceMapRetriever {
 
-    private final static Logger log = LoggerFactory.getLogger(StackTraceSourceMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(CachedSourceMapRetriever.class);
 
     private final RawSourceMapRetriever rawSourceMapRetriever;
 

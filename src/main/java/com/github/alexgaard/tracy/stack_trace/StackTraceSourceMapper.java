@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class StackTraceSourceMapper {
 
-    private final static Logger log = LoggerFactory.getLogger(StackTraceSourceMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(StackTraceSourceMapper.class);
 
     private final SourceMapRetriever sourceMapRetriever;
 

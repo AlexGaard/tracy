@@ -8,6 +8,8 @@ import java.util.List;
 
 public class MappingsTokenizer {
 
+    private MappingsTokenizer() {}
+
     public static List<MappingToken> extractTokens(String mappingsStr) {
         final CharIterator iter = CharIterator.fromString(mappingsStr);
         final List<MappingToken> tokens = new ArrayList<>();
