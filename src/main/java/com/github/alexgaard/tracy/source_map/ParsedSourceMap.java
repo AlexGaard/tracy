@@ -1,5 +1,6 @@
 package com.github.alexgaard.tracy.source_map;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +36,8 @@ public class ParsedSourceMap {
         return new ParsedSourceMap(
                 rawSourceMap.getVersion(),
                 rawSourceMap.getFile(),
-                rawSourceMap.getSources(),
+                Collections.emptyList(),
+//                rawSourceMap.getSources(), Skip sources as they are not used and take a lot of memory
                 rawSourceMap.getNames(),
                 mappingTokens,
                 rawSourceMap.getX_google_ignoreList()
