@@ -22,16 +22,17 @@ public class StackTraceSourceMapper {
 
     private final StackTraceParser stackTraceParser;
 
-
     public StackTraceSourceMapper(RawSourceMapRetriever rawSourceMapRetriever) {
         stackTraceParser = new BaseStackTraceParser();
 
         sourceMapRetriever = new CachedSourceMapRetriever(rawSourceMapRetriever, Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofHours(6))
+                .maximumSize(1000)
                 .build());
 
         stackFrameResolver = new CachedStackFrameResolver(new BaseStackFrameResolver(false), Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofHours(6))
+                .maximumSize(100_000)
                 .build());
     }
 
