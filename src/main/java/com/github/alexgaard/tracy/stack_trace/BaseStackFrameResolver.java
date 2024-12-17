@@ -41,7 +41,11 @@ public class BaseStackFrameResolver implements StackFrameResolver {
             functionName = sourceMap.names.get(mappingToken.nameIndex);
         }
 
-        return new StackFrame(functionName, sourceMap.sources.get(mappingToken.sourceIndex), mappingToken.sourceLine + 1, mappingToken.sourceColumn);
+        String file = sourceMap.sources.size() > mappingToken.sourceIndex
+                ? sourceMap.sources.get(mappingToken.sourceIndex)
+                : "unknown";
+
+        return new StackFrame(functionName, file, mappingToken.sourceLine + 1, mappingToken.sourceColumn);
     }
 
     public static Optional<MappingToken> findMappingToken(StackFrame minifiedStackFrame, List<MappingToken> sortedMappingTokens) {
