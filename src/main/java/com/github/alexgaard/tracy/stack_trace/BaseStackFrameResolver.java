@@ -35,15 +35,17 @@ public class BaseStackFrameResolver implements StackFrameResolver {
     }
 
     public static StackFrame createSourceStackFrame(MappingToken mappingToken, ParsedSourceMap sourceMap) {
-        String functionName = null;
+        String functionName;
 
         if (mappingToken.nameIndex >= 0 && mappingToken.nameIndex < sourceMap.names.size()) {
             functionName = sourceMap.names.get(mappingToken.nameIndex);
+        } else {
+            functionName = StackFrame.ANONYMOUS_FUNCTION;
         }
 
         String file = sourceMap.sources.size() > mappingToken.sourceIndex
                 ? sourceMap.sources.get(mappingToken.sourceIndex)
-                : "unknown";
+                : StackFrame.UNKNOWN_FILE;
 
         return new StackFrame(functionName, file, mappingToken.sourceLine + 1, mappingToken.sourceColumn);
     }

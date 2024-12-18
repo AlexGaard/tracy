@@ -3,6 +3,7 @@ package com.github.alexgaard.tracy.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -40,7 +41,19 @@ public class SourceMapUtils {
                 return Optional.of(sourceMapContent);
             }
         } catch (Exception e) {
-            log.warn("Unable to find source map file at baseUrl {} with path {}", baseUrl, minifiedFilePath+ ".map");
+            log.warn("Unable to find source map file at baseUrl {} with path {}", baseUrl, minifiedFilePath + ".map");
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<String> readSourceMapFromResources(String directory, String minifiedFileName) {
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+            URI resourceUri = classLoader.getResource(directory + File.separator + minifiedFileName + ".map").toURI();
+
+            return Optional.of(Files.readString(Paths.get(resourceUri)));
+        } catch (Exception e) {
             return Optional.empty();
         }
     }

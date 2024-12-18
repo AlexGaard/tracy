@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class StackTraceSourceMapper {
@@ -21,6 +22,16 @@ public class StackTraceSourceMapper {
     private final StackFrameResolver stackFrameResolver;
 
     private final StackTraceParser stackTraceParser;
+
+    public StackTraceSourceMapper(
+            SourceMapRetriever sourceMapRetriever,
+            StackFrameResolver stackFrameResolver,
+            StackTraceParser stackTraceParser
+    ) {
+        this.sourceMapRetriever = sourceMapRetriever;
+        this.stackFrameResolver = stackFrameResolver;
+        this.stackTraceParser = stackTraceParser;
+    }
 
     public StackTraceSourceMapper(RawSourceMapRetriever rawSourceMapRetriever) {
         stackTraceParser = new BaseStackTraceParser();
@@ -66,26 +77,14 @@ public class StackTraceSourceMapper {
 
             StackFrame resolvedStackFrame = maybeStackFrame.get();
 
-            boolean hadFunctionNameOriginally = minifiedStackFrame.functionName != null && resolvedStackFrame.functionName == null;
-
-            stackTrace = stackTrace.replace(stackFrameStr, toSourceFrameString(resolvedStackFrame, hadFunctionNameOriginally));
+            stackTrace = stackTrace.replace(stackFrameStr, createSourceFrameString(resolvedStackFrame));
         }
 
         return stackTrace;
     }
 
-    public static String toSourceFrameString(StackFrame sourceFrame, boolean hadFunctionNameOriginally) {
-        String fileLineCol = sourceFrame.file + ":" + sourceFrame.line + ":" + sourceFrame.col;
-
-        if (sourceFrame.functionName != null) {
-            return "at " + sourceFrame.functionName + " (" + fileLineCol + ")";
-        }
-
-        if (hadFunctionNameOriginally) {
-            return "at " + fileLineCol;
-        }
-
-        return fileLineCol;
+    private static String createSourceFrameString(StackFrame sourceFrame) {
+        return "at " + sourceFrame.functionName + " (" + sourceFrame.file + ":" + sourceFrame.line + ":" + sourceFrame.col + ")";
     }
 
 }

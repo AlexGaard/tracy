@@ -3,6 +3,9 @@ package com.github.alexgaard.tracy.stack_trace;
 import java.util.Objects;
 
 public class StackFrame {
+    public static final String ANONYMOUS_FUNCTION = "<anonymous>";
+
+    public static final String UNKNOWN_FILE = "unknown";
 
     public final String functionName;
 
