@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+
 public class StackTraceSourceMapper {
 
     private static final Logger log = LoggerFactory.getLogger(StackTraceSourceMapper.class);
@@ -84,7 +87,10 @@ public class StackTraceSourceMapper {
     }
 
     private static String createSourceFrameString(StackFrame sourceFrame) {
-        return "at " + sourceFrame.functionName + " (" + sourceFrame.file + ":" + sourceFrame.line + ":" + sourceFrame.col + ")";
+        String functionName = ofNullable(sourceFrame.functionName).orElse(StackFrame.ANONYMOUS_FUNCTION);
+        String file = ofNullable(sourceFrame.file).orElse(StackFrame.UNKNOWN_FILE);
+
+        return format("%s (%s:%d:%d)", functionName, file, sourceFrame.line, sourceFrame.col);
     }
 
 }
