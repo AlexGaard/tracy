@@ -6,6 +6,7 @@ import com.github.alexgaard.tracy.source_map.ParsedSourceMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BaseStackFrameResolver implements StackFrameResolver {
 
@@ -35,17 +36,11 @@ public class BaseStackFrameResolver implements StackFrameResolver {
     }
 
     public static StackFrame createSourceStackFrame(MappingToken mappingToken, ParsedSourceMap sourceMap) {
-        String functionName;
+        String functionName = safeGet(sourceMap.names, mappingToken.nameIndex)
+                .orElse(StackFrame.ANONYMOUS_FUNCTION);
 
-        if (mappingToken.nameIndex >= 0 && mappingToken.nameIndex < sourceMap.names.size()) {
-            functionName = sourceMap.names.get(mappingToken.nameIndex);
-        } else {
-            functionName = StackFrame.ANONYMOUS_FUNCTION;
-        }
-
-        String file = sourceMap.sources.size() > mappingToken.sourceIndex
-                ? sourceMap.sources.get(mappingToken.sourceIndex)
-                : StackFrame.UNKNOWN_FILE;
+        String file = safeGet(sourceMap.sources, mappingToken.sourceIndex)
+                .orElse(StackFrame.UNKNOWN_FILE);
 
         return new StackFrame(functionName, file, mappingToken.sourceLine + 1, mappingToken.sourceColumn);
     }
@@ -67,6 +62,14 @@ public class BaseStackFrameResolver implements StackFrameResolver {
         int tokenIdx = Collections.binarySearch(sortedMappingTokens, searchForToken, MappingToken::compare);
 
         return Optional.of(sortedMappingTokens.get(Math.abs(tokenIdx)));
+    }
+
+    public static <T> Optional<T> safeGet(List<T> list, int idx) {
+        if (idx < 0 || idx >= list.size()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(list.get(idx));
     }
 
 }
