@@ -39,16 +39,16 @@ class StackTraceSourceMapperTest {
                 "    at E (index-BEz93Ooz.js:25:1562)";
 
         String expectedTrace = "Error: Kablamo\n" +
-                "    at <anonymous> (../../src/App.tsx:11:18)\n" +
-                "    at test2 (../../src/App.tsx:18:12)\n" +
-                "    at test (../../src/App.tsx:22:12)\n" +
-                "    at c (../../node_modules/react-dom/cjs/react-dom.production.min.js:160:136)\n" +
-                "    at Nh (../../node_modules/react-dom/cjs/react-dom.production.min.js:289:336)\n" +
-                "    at Vk (../../node_modules/react-dom/cjs/react-dom.production.min.js:279:388)\n" +
-                "    at Uk (../../node_modules/react-dom/cjs/react-dom.production.min.js:279:319)\n" +
-                "    at Tk (../../node_modules/react-dom/cjs/react-dom.production.min.js:279:179)\n" +
-                "    at Ik (../../node_modules/react-dom/cjs/react-dom.production.min.js:267:208)\n" +
-                "    at d (../../node_modules/scheduler/cjs/scheduler.production.min.js:13:202)";
+                "    at <anonymous> (src/App.tsx:11:18)\n" +
+                "    at test2 (src/App.tsx:18:12)\n" +
+                "    at test (src/App.tsx:22:12)\n" +
+                "    at c (node_modules/react-dom/cjs/react-dom.production.min.js:160:136)\n" +
+                "    at Nh (node_modules/react-dom/cjs/react-dom.production.min.js:289:336)\n" +
+                "    at Vk (node_modules/react-dom/cjs/react-dom.production.min.js:279:388)\n" +
+                "    at Uk (node_modules/react-dom/cjs/react-dom.production.min.js:279:319)\n" +
+                "    at Tk (node_modules/react-dom/cjs/react-dom.production.min.js:279:179)\n" +
+                "    at Ik (node_modules/react-dom/cjs/react-dom.production.min.js:267:208)\n" +
+                "    at d (node_modules/scheduler/cjs/scheduler.production.min.js:13:202)";
 
         assertEquals(expectedTrace, stackTraceSourceMapper.applySourceMap(stackTrace));
     }

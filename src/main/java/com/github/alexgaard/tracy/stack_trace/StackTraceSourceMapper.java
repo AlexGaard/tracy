@@ -87,7 +87,9 @@ public class StackTraceSourceMapper {
 
     private static String createSourceFrameString(StackFrame sourceFrame) {
         String functionName = ofNullable(sourceFrame.functionName).orElse(StackFrame.ANONYMOUS_FUNCTION);
-        String file = ofNullable(sourceFrame.file).orElse(StackFrame.UNKNOWN_FILE);
+        String file = ofNullable(sourceFrame.file)
+                .map(f -> f.replace("../", ""))
+                .orElse(StackFrame.UNKNOWN_FILE);
 
         return format("%s (%s:%d:%d)", functionName, file, sourceFrame.line, sourceFrame.col);
     }
