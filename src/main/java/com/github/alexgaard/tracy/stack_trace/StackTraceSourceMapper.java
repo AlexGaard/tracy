@@ -40,8 +40,7 @@ public class StackTraceSourceMapper {
         stackTraceParser = new BaseStackTraceParser();
 
         sourceMapRetriever = new CachedSourceMapRetriever(rawSourceMapRetriever, Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofHours(6))
-                .maximumSize(1000)
+                .maximumSize(500)
                 .build());
 
         stackFrameResolver = new CachedStackFrameResolver(new BaseStackFrameResolver(false), Caffeine.newBuilder()
